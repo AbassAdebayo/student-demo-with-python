@@ -1,17 +1,17 @@
 class Student:
-    def __init__(student, student_id, name, email, age):
-        student.student_id = student_id
-        student.name = name
-        student.email = email
-        student.age = age
+    def __init__(self, student_id, name, email, age):
+        self.student_id = student_id
+        self.name = name
+        self.email = email
+        self.age = age
         
         
               
-def to_dict(student):
+def to_dict(self):
     return{
-        'student_id': student.student_id,
-        'name': student.name,
-        'email': student.email,
-        'age': student.age
+        'student_id': self.student_id,
+        'name': self.name,
+        'email': self.email,
+        'age': self.age
     }
     
