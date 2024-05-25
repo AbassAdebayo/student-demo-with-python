@@ -7,6 +7,60 @@ import logging
 logging.info("Registering create_student routes")
 
 @services_bp.route('/students', methods=['POST'])
+@swag_from({
+    
+    'tags': ['Students'],
+    'description': 'Create a new student',
+    'parameters': [
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'name': {'type': 'string'},
+                    'email': {'type': 'string'},
+                    'age': {'type': 'integer'}
+                },
+                'example': {
+                    'name': 'John Doe',
+                    'email': 'john.doe@example.com',
+                    'age': 21
+                }
+            }
+        }
+    ],
+    'responses': {
+        '201': {
+            'description': 'Student created successfully',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'student_id': {'type': 'integer'},
+                    'name': {'type': 'string'},
+                    'email': {'type': 'string'},
+                    'age': {'type': 'integer'}
+                },
+                'example': {
+                    'student_id': 1,
+                    'name': 'John Doe',
+                    'email': 'john.doe@example.com',
+                    'age': 21
+                }
+            }
+        },
+        '500': {
+            'description': 'Error creating student',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'error': {'type': 'string'}
+                }
+            }
+        }
+    }
+})
 def create_student():
     data = request.json
     logging.info(f"Received data: {data}")
