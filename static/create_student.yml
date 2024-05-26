@@ -1,0 +1,64 @@
+swagger: '2.0'
+info:
+  version: "1.0.0"
+  title: "Student API"
+  description: "API for managing students"
+
+paths:
+  /students:
+    post:
+      tags:
+        - "Students"
+      summary: "Create a new student"
+      description: "Create a new student with name, email, and age"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Student object"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              name:
+                type: "string"
+              email:
+                type: "string"
+              age:
+                type: "integer"
+            example:
+              name: "John Doe"
+              email: "john.doe@example.com"
+              age: 21
+      responses:
+        200:
+          description: "Student created successfully"
+          schema:
+            type: "object"
+            properties:
+              student_id:
+                type: "integer"
+              name:
+                type: "string"
+              email:
+                type: "string"
+              age:
+                type: "integer"
+            example:
+              student_id: 1
+              name: "John Doe"
+              email: "john.doe@example.com"
+              age: 21
+        400:
+          description: Email already exists
+          schema:
+            type: object
+            properties:
+            error:
+              type: "string"
+        500:
+          description: "Error creating student"
+          schema:
+            type: "object"
+            properties:
+              error:
+                type: "string"
