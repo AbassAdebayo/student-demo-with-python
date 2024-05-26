@@ -5,13 +5,14 @@ class Student:
         self.email = email
         self.age = age
         
-        
-              
-def to_dict(self):
-    return{
+    def to_dict(self):
+        return {
         'student_id': self.student_id,
         'name': self.name,
         'email': self.email,
         'age': self.age
-    }
+        
+    }   
+              
+
     
