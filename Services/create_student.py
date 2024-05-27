@@ -8,7 +8,7 @@ import logging
 logging.info("Registering create_student routes")
 
 @services_bp.route('/students', methods=['POST'])
-@swag_from('../static/create_student.yml')             
+@swag_from('../static/swagger_openai.yml', endpoint='create_student')             
 def create_student():
     data = request.json
     logging.info(f"Received data: {data}")

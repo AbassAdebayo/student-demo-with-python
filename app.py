@@ -11,18 +11,17 @@ app.config.from_object(Config)
 
 mysql = MySQL(app)
 
-swagger = Swagger(app)
+swagger = Swagger(app, template_file='static/swagger_openai.yml')
 
 # Register the blueprint
 app.register_blueprint(services_bp)
 
 
-# Setup Swagger UI
-SWAGGER_URL = '/swagger'
-API_URL = '/static/create_student.yml'
-swaggerui_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL, config={'app_name': "Student API"})
-app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
-
+# # Setup Swagger UI
+# SWAGGER_URL = '/swagger'
+# API_URL = '/static/create_student.yml'
+# swaggerui_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL, config={'app_name': "Student API"})
+# app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
