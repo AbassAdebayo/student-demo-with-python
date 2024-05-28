@@ -1,28 +1,27 @@
-from flask import Flask, jsonify
-from flask_mysqldb import MySQL
-from config import Config
+from flask import Flask
+from flask_restx import Api
+from extensions import mysql
 from Services import services_bp
-from flasgger import Swagger
-from flask_swagger_ui import get_swaggerui_blueprint
-import logging
 
-app = Flask(__name__)
-app.config.from_object(Config)
-
-mysql = MySQL(app)
-
-swagger = Swagger(app, template_file='static/swagger_openai.yml')
-
-# Register the blueprint
-app.register_blueprint(services_bp)
-
-
-# # Setup Swagger UI
-# SWAGGER_URL = '/swagger'
-# API_URL = '/static/create_student.yml'
-# swaggerui_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL, config={'app_name': "Student API"})
-# app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+def create_app():
+    app = Flask(__name__)
+    app.config['MYSQL_HOST'] = 'localhost'
+    app.config['MYSQL_USER'] = 'student_user'
+    app.config['MYSQL_PASSWORD'] = 'DefinedCode'
+    app.config['MYSQL_DB'] = 'student_db'
+    
+    mysql.init_app(app)
+    
+    api = Api(app, version='1.0', title='Student API', description='A simple Student API')
+    
+    # Register your blueprint
+    app.register_blueprint(services_bp, url_prefix='/api')
+    
+    return app
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    app = create_app()
     app.run(debug=True)
+
+
+
