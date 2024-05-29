@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_restx import Api
 from extensions import mysql
-from Services import services_bp
 
 def create_app():
     app = Flask(__name__)
@@ -9,19 +8,22 @@ def create_app():
     app.config['MYSQL_USER'] = 'student_user'
     app.config['MYSQL_PASSWORD'] = 'DefinedCode'
     app.config['MYSQL_DB'] = 'student_db'
-    
+
     mysql.init_app(app)
-    
-    api = Api(app, version='1.0', title='Student API', description='A simple Student API')
-    
-    # Register your blueprint
-    app.register_blueprint(services_bp, url_prefix='/api')
-    
+
+    api = Api(app, doc='/swagger', title='Student API', description='API for student operations')
+
+    # Import the namespaces after initializing the Api object to avoid circular imports
+    from Services.create_student import api as create_student_ns
+    from Services.get_all_students import api as get_all_students_ns
+    # from .update_student import api as update_ns
+    # from .get_student_by_email import api as get_by_email_ns
+
+    api.add_namespace(create_student_ns, path='/students')
+    api.add_namespace(get_all_students_ns, path='/students')
+
     return app
 
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=True)
-
-
-
