@@ -1,36 +1,44 @@
-from flask import request, jsonify
-from Services import services_bp
+from flask import request
+from flask_restx import Resource, Namespace, fields
 from Models.student import Student
 from app import mysql
-from flasgger.utils import swag_from
 import logging
 
+api = Namespace('Update Student')
 
-@services_bp.route('/students/<int:student_id>', methods=['PUT'])
-@swag_from('../static/swagger_openai.yml', endpoint='update_student')
+student_model = api.model('Student', {
+    'name': fields.String(required=True, description='The student\'s name'),
+    'email': fields.String(required=True, description='The student\'s email'),
+    'age': fields.Integer(required=True, description='The student\'s age')
+})
 
-def update_student(student_id):
-    data  = request.json
-    cursor = mysql.connection.cursor()
-    
-    try:
-        cursor.execute("SELECT * FROM students WHERE id = %s", (student_id,))
-        existing_student = cursor.fetchone()
-    
-        if not existing_student:
-            return jsonify({"message": "Student not found"}), 404
-        cursor.execute("UPDATE students SET name = %s, age= %s, email = %s WHERE id = %s", 
-                   (data['name'], data['age'], data['email'], student_id))
-        mysql.connection.commit()
-        cursor.close()
-        updated_student = Student(student_id, data['name'], data['email'], data['age'])
-    
-        return jsonify({"message": f"Student {data['name']} updated successfully", "student": updated_student.to_dict()}), 200
-    except Exception as e:
-        mysql.connection.rollback()
-        return jsonify({"message": f"Error while updating Student: {str(e)}"})
-    finally:
-        cursor.close()
+@api.route('/<int:student_id>')
+class UpdateStudent(Resource):
+    @api.expect(student_model)
+    @api.response(200, 'Student updated successfully')
+    @api.response(400, 'student not found')
+    def put(self, student_id):
+        """"Update student by ID"""
+        data = request.json
+        try:
+            cursor = mysql.connection.cursor()
+            cursor.execute("SELECT * FROM students WHERE id = %s", (student_id,))
+            existing_student = cursor.fetchone()
+
+            if not existing_student:
+                return {"error": "Student not found!"}, 404
+
+            cursor.execute("UPDATE students SET name = %s, email = %s, age = %s WHERE id = %s",
+                           (data['name'], data['email'], data['age'], student_id))
+            mysql.connection.commit()
+            cursor.close()
+            updated_student = Student(student_id, data['name'], data['email'], data['age'])
+            logging.info(f"Updated student: {updated_student.to_dict()}")
+            return {"message": "Student updated successfully", "student": updated_student.to_dict()}, 200
+        except Exception as e:
+            logging.error(f"Error updating student: {e}")
+            return {"error": str(e)}, 500
+        
 
     
     
