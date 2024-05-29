@@ -4,7 +4,7 @@ from Models.student import Student
 from app import mysql
 import logging
 
-api = Namespace('students', description='Student operations')
+api = Namespace('Create Student')
 
 student_model = api.model('Student', {
     'name': fields.String(required=True, description='The student name'),
@@ -12,7 +12,7 @@ student_model = api.model('Student', {
     'age': fields.Integer(required=True, description='The student age')
 })
 
-@api.route('/')
+@api.route('/create')
 class CreateStudent(Resource):
     @api.expect(student_model)
     @api.response(200, 'Student created successfully')
