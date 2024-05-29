@@ -16,11 +16,13 @@ def create_app():
     # Import the namespaces after initializing the Api object to avoid circular imports
     from Services.create_student import api as create_student_ns
     from Services.get_all_students import api as get_all_students_ns
+    from Services.delete_student import api as delete_student_ns
     # from .update_student import api as update_ns
     # from .get_student_by_email import api as get_by_email_ns
 
     api.add_namespace(create_student_ns, path='/students')
     api.add_namespace(get_all_students_ns, path='/students')
+    api.add_namespace(delete_student_ns, path='/students')
 
     return app
 

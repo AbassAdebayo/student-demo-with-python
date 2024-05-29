@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request
 from flask_restx import Resource, Namespace, fields
 from Models.student import Student
 from app import mysql
