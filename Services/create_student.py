@@ -7,9 +7,9 @@ import logging
 api = Namespace('Create Student')
 
 student_model = api.model('Student', {
-    'name': fields.String(required=True, description='The student name'),
-    'email': fields.String(required=True, description='The student email'),
-    'age': fields.Integer(required=True, description='The student age')
+    'name': fields.String(required=True, description='The student\'s name'),
+    'email': fields.String(required=True, description='The student\'s email'),
+    'age': fields.Integer(required=True, description='The student\'s age')
 })
 
 @api.route('/create')
