@@ -1,22 +1,32 @@
-from flask import request, jsonify
-from Services import services_bp
+from flask_restx import Resource, Namespace
 from Models.student import Student
-from app import mysql
-from flasgger.utils import swag_from
+from extensions import mysql
 import logging
 
+api = Namespace('Get Student By Email')
 
-@services_bp.route('/students/<email>/', methods=['GET'])
-@swag_from('../static/swagger_openai.yml', endpoint='get_student_by_email')
-def get_student_by_email(email):
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM students WHERE email= %s", (email,))
-    result = cursor.fetchone()
-    cursor.close()
-    
-    if result:
-        get_student = Student(result['id'], result['name'], result['email'], result['age'])
-        logging.info(f"Created student: {get_student.to_dict()}")
-        return jsonify({"message": f"Student with email: {email} retrieved successfully", "student": get_student.to_dict()}), 200
-    else:
-        return jsonify({"message": f"Student with email: {email} not found!"}), 404
+@api.route('/<string:email>')
+class GetStudentByEmail(Resource):
+    def get(self, email):
+        """Get student by email"""
+        try:
+            cursor = mysql.connection.cursor()
+            cursor.execute("SELECT * FROM students WHERE email= %s", (email,))
+            get_student = cursor.fetchone()
+            cursor.close()
+            if not get_student: return {"error": "Student not found!"}, 404
+            
+            fetched_student = {
+                'student_id': get_student[0],
+                'name': get_student[1],
+                'email': get_student[2],
+                'age': get_student[3]
+            }
+            student = Student(**fetched_student)
+            logging.info(f"Retrieved student: {student.to_dict()}")
+            return {"message": "Student retrieved successfully", "student": student.to_dict()}, 200
+        except Exception as e:
+                logging.error(f"Error retrieving deleting student: {e}")
+                return {"error": str(e)}, 500
+        
+        

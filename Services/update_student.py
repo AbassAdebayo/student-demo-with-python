@@ -21,7 +21,7 @@ class UpdateStudent(Resource):
         """"Update student by ID"""
         data = request.json
         try:
-            cursor = mysql.connection.cursor()
+            cursor = mysql.connection.cursor(dictionary=True)
             cursor.execute("SELECT * FROM students WHERE id = %s", (student_id,))
             existing_student = cursor.fetchone()
 
