@@ -8,7 +8,7 @@ def create_app():
     app.config['MYSQL_USER'] = 'student_user'
     app.config['MYSQL_PASSWORD'] = 'DefinedCode'
     app.config['MYSQL_DB'] = 'student_db'
-
+    
     mysql.init_app(app)
 
     api = Api(app, doc='/swagger', title='Student API', description='API for student operations')
@@ -18,12 +18,13 @@ def create_app():
     from Services.get_all_students import api as get_all_students_ns
     from Services.delete_student import api as delete_student_ns
     from Services.update_student import api as update_ns
-    # from .get_student_by_email import api as get_by_email_ns
+    from Services.get_student_by_email import api as get_by_email_ns
 
     api.add_namespace(create_student_ns, path='/students')
     api.add_namespace(get_all_students_ns, path='/students')
     api.add_namespace(delete_student_ns, path='/students')
     api.add_namespace(update_ns, path='/students')
+    api.add_namespace(get_by_email_ns, path='/students')
 
     return app
 
